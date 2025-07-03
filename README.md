@@ -24,3 +24,15 @@ personal.bank — это микросервис для управления по
 ```bash
 git clone https://github.com/Andrey-Pominov/personal.bank.git
 cd personal.bank
+```
+
+#  Работа с Liquibase
+Можно сгенерировать автоматически:
+- Liquibase может создать changelog на основе уже существующей БД:
+ 
+```liquibase generateChangeLog --url=jdbc:postgresql://localhost:5432/{dbname} --username={user} --password={pass} --outputFile=db/changelog.xml ```
+- Сравнить текущее состояние БД с моделью и создать новую миграцию:
+
+```liquibase diffChangeLog --referenceUrl=jdbc:postgresql://localhost:5432/{dbname} --username={user} --password={pass} --outputFile=db/new_changes.xml ```
+
+- Spring Boot может сам генерировать changelog на основе @Entity классов, если настроить ```spring.jpa.hibernate.ddl-auto=update```, но это плохая практика для продакшена.
