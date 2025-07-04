@@ -90,4 +90,12 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
                 constraintName="fk_phone_user"/>
     </changeSet>
 
+    <changeSet id="5" author="andreypominov">
+        <addColumn tableName="account">
+            <column name="initial_balance" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

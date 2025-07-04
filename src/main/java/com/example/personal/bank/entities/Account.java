@@ -26,4 +26,9 @@ public class Account {
     @OneToOne
     @JoinColumn(name="user_id", nullable = false, unique = true)
     private User user;
+
+
+    // Поле для начального баланса и работы с увеличением депозита
+    @Column(name = "initial_balance", precision = 19, scale = 2)
+    private BigDecimal initialBalance;
 }
