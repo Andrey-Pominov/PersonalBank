@@ -3,9 +3,7 @@ package com.example.personal.bank.controller;
 
 import com.example.personal.bank.dto.UserDTO;
 import com.example.personal.bank.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,13 +26,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "Search users with filters and pagination",
-            description = "Searches users by date of birth (greater than), phone (exact match), name (starts with), or email (exact match). Supports pagination.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Users found successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-    })
+    @ApiResponse(responseCode = "200", description = "Users found successfully")
     @GetMapping("/search")
     public ResponseEntity<Page<UserDTO>> searchUsers(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateOfBirth,

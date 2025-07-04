@@ -24,7 +24,7 @@ public class Account {
     private BigDecimal balance;
 
     @OneToOne
-    @JoinColumn(name="user_id", nullable = false, unique = true)
+    @JoinColumn(name="user_id", referencedColumnName = "id", nullable = false, unique = true)
     private User user;
 
 
