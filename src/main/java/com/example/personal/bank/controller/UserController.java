@@ -4,7 +4,6 @@ package com.example.personal.bank.controller;
 import com.example.personal.bank.dto.UserDTO;
 import com.example.personal.bank.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

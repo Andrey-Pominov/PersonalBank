@@ -1,7 +1,11 @@
 package com.example.personal.bank.service;
 
 import com.example.personal.bank.dto.UserDTO;
+import com.example.personal.bank.entities.EmailData;
+import com.example.personal.bank.entities.PhoneData;
 import com.example.personal.bank.entities.User;
+import com.example.personal.bank.repository.EmailRepository;
+import com.example.personal.bank.repository.PhoneRepository;
 import com.example.personal.bank.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -21,6 +25,8 @@ import java.util.Optional;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private final EmailRepository emailRepository;
+    private final PhoneRepository phoneRepository;
 
     @Cacheable(value = "users", key = "#id")
     public Optional<UserDTO> findById(Long id) {
@@ -34,14 +40,19 @@ public class UserService {
         logger.info("Searching users with filters: dateOfBirth={}, name={}, email={}, phone={}", dateOfBirth, name, email, phone);
 
         if (email != null) {
-            return userRepository.findByEmail(email)
-                    .map(user -> new PageImpl<>(List.of(mapToUserDTO(user)), pageable, 1))
+            return emailRepository.findByEmail(email)
+                    .map(emailData -> userRepository.findById(emailData.getUser().getId())
+                            .map(user -> new PageImpl<>(List.of(mapToUserDTO(user)), pageable, 1))
+                            .orElseGet(() -> new PageImpl<>(List.of(), pageable, 0)))
                     .orElse(new PageImpl<>(List.of(), pageable, 0));
         }
 
+
         if (phone != null) {
-            return userRepository.findByPhone(phone)
-                    .map(user -> new PageImpl<>(List.of(mapToUserDTO(user)), pageable, 1))
+            return phoneRepository.findByPhone(phone)
+                    .map(phoneData -> userRepository.findById(phoneData.getUser().getId())
+                            .map(user -> new PageImpl<>(List.of(mapToUserDTO(user)), pageable, 1))
+                            .orElseGet(() -> new PageImpl<>(List.of(), pageable, 0)))
                     .orElse(new PageImpl<>(List.of(), pageable, 0));
         }
 
