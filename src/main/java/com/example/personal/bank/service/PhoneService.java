@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.personal.bank.service.AuthService.getAuthenticatedUserId;
+
 @Service
 @RequiredArgsConstructor
 public class PhoneService {
@@ -34,16 +36,16 @@ public class PhoneService {
 
     @Transactional
     @CacheEvict(value = {"users", "userSearch"}, key = "#userId")
-    public PhoneDTO createPhone(Long userId, PhoneDTO phoneDTO) {
-        logger.info("Creating phone for user {}: {}", userId, phoneDTO.getPhone());
+    public PhoneDTO createPhone(Long userId, String phone) {
+        logger.info("Creating phone for user {}: {}", userId, phone);
         validateUserAccess(userId);
-        if (phoneRepository.findByPhone(phoneDTO.getPhone()).isPresent()) {
-            throw new IllegalArgumentException("Phone already in use: " + phoneDTO.getPhone());
+        if (phoneRepository.findByPhone(phone).isPresent()) {
+            throw new IllegalArgumentException("Phone already in use: " + phone);
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
         PhoneData phoneData = new PhoneData();
-        phoneData.setPhone(phoneDTO.getPhone());
+        phoneData.setPhone(phone);
         phoneData.setUser(user);
         PhoneData saved = phoneRepository.save(phoneData);
         return mapToPhoneDTO(saved);
@@ -51,18 +53,18 @@ public class PhoneService {
 
     @Transactional
     @CacheEvict(value = {"users", "userSearch"}, key = "#userId")
-    public PhoneDTO updatePhone(Long userId, Long phoneId, PhoneDTO phoneDTO) {
+    public PhoneDTO updatePhone(Long userId, Long phoneId, String phone) {
         logger.info("Updating phone {} for user {}", phoneId, userId);
         validateUserAccess(userId);
         PhoneData phoneData = phoneRepository.findById(phoneId)
                 .filter(p -> p.getUser().getId().equals(userId))
                 .orElseThrow(() -> new IllegalArgumentException("Phone not found or not owned by user"));
-        if (phoneRepository.findByPhone(phoneDTO.getPhone())
+        if (phoneRepository.findByPhone(phone)
                 .filter(p -> !p.getId().equals(phoneId))
                 .isPresent()) {
-            throw new IllegalArgumentException("Phone already in use: " + phoneDTO.getPhone());
+            throw new IllegalArgumentException("Phone already in use: " + phone);
         }
-        phoneData.setPhone(phoneDTO.getPhone());
+        phoneData.setPhone(phone);
         PhoneData saved = phoneRepository.save(phoneData);
         return mapToPhoneDTO(saved);
     }
@@ -99,8 +101,4 @@ public class PhoneService {
         return dto;
     }
 
-    private Long getAuthenticatedUserId() {
-        // Implement JWT extraction
-        return 1L; // Replace with actual logic
-    }
 }

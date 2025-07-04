@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.personal.bank.service.AuthService.getAuthenticatedUserId;
+
 @Service
 @RequiredArgsConstructor
 public class EmailService {
@@ -32,16 +34,16 @@ public class EmailService {
 
     @Transactional
     @CacheEvict(value = {"users", "userSearch"}, key = "#userId")
-    public EmailDTO createEmail(Long userId, EmailDTO emailDTO) {
-        logger.info("Creating email for user {}: {}", userId, emailDTO.getEmail());
+    public EmailDTO createEmail(Long userId, String email) {
+        logger.info("Creating email for user {}: {}", userId, email);
         validateUserAccess(userId);
-        if (emailRepository.findByEmail(emailDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already in use: " + emailDTO.getEmail());
+        if (emailRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email already in use: " + email);
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
         EmailData emailData = new EmailData();
-        emailData.setEmail(emailDTO.getEmail());
+        emailData.setEmail(email);
         emailData.setUser(user);
         EmailData saved = emailRepository.save(emailData);
         return mapToEmailDTO(saved);
@@ -49,18 +51,18 @@ public class EmailService {
 
     @Transactional
     @CacheEvict(value = {"users", "userSearch"}, key = "#userId")
-    public EmailDTO updateEmail(Long userId, Long emailId, EmailDTO emailDTO) {
+    public EmailDTO updateEmail(Long userId, Long emailId, String email) {
         logger.info("Updating email {} for user {}", emailId, userId);
         validateUserAccess(userId);
         EmailData emailData = emailRepository.findById(emailId)
                 .filter(e -> e.getUser().getId().equals(userId))
                 .orElseThrow(() -> new IllegalArgumentException("Email not found or not owned by user"));
-        if (emailRepository.findByEmail(emailDTO.getEmail())
+        if (emailRepository.findByEmail(email)
                 .filter(e -> !e.getId().equals(emailId))
                 .isPresent()) {
-            throw new IllegalArgumentException("Email already in use: " + emailDTO.getEmail());
+            throw new IllegalArgumentException("Email already in use: " + email);
         }
-        emailData.setEmail(emailDTO.getEmail());
+        emailData.setEmail(email);
         EmailData saved = emailRepository.save(emailData);
         return mapToEmailDTO(saved);
     }
@@ -81,7 +83,7 @@ public class EmailService {
     }
 
     private void validateUserAccess(Long userId) {
-        Long authenticatedUserId = getAuthenticatedUserId(); // Assume this retrieves JWT user ID
+        Long authenticatedUserId = getAuthenticatedUserId();
         if (!authenticatedUserId.equals(userId)) {
             throw new SecurityException("Unauthorized access to user data");
         }
@@ -97,9 +99,4 @@ public class EmailService {
         return dto;
     }
 
-    // Placeholder for JWT user ID retrieval
-    private Long getAuthenticatedUserId() {
-        // Implement JWT extraction, e.g., via SecurityContextHolder
-        return 1L; // Replace with actual logic
-    }
 }
