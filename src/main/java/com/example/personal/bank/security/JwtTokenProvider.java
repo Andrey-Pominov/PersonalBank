@@ -1,4 +1,4 @@
-package com.example.personal.bank.configuration;
+package com.example.personal.bank.security;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

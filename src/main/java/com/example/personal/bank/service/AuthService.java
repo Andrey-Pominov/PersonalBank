@@ -1,6 +1,6 @@
 package com.example.personal.bank.service;
 
-import com.example.personal.bank.configuration.JwtTokenProvider;
+import com.example.personal.bank.security.JwtTokenProvider;
 import com.example.personal.bank.entities.User;
 import com.example.personal.bank.repository.UserRepository;
 import org.springframework.security.oauth2.jwt.Jwt;
