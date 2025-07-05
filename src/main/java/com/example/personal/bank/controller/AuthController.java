@@ -19,17 +19,14 @@ public class AuthController {
     private final AuthService authService;
 
     @ApiResponse(responseCode = "200", description = "Token issued")
-    @PostMapping("/login/email")
-    public ResponseEntity<TokenResponse> loginByEmail(@RequestBody AuthRequest request) {
-        String token = authService.authenticateByEmail(request.getIdentifier(), request.getPassword());
-        return ResponseEntity.ok(new TokenResponse(token));
-    }
-
-    @ApiResponse(responseCode = "200", description = "Token issued")
-    @PostMapping("/login/phone")
-    public ResponseEntity<TokenResponse> loginByPhone(@RequestBody AuthRequest request) {
-        String token = authService.authenticateByPhone(request.getIdentifier(), request.getPassword());
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> login(@RequestBody AuthRequest request) {
+        String token;
+        switch (request.getType()) {
+            case EMAIL -> token = authService.authenticateByEmail(request.getIdentifier(), request.getPassword());
+            case PHONE -> token = authService.authenticateByPhone(request.getIdentifier(), request.getPassword());
+            default -> throw new IllegalArgumentException("Unsupported login type: " + request.getType());
+        }
         return ResponseEntity.ok(new TokenResponse(token));
     }
 }
-
