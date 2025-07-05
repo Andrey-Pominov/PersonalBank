@@ -1,4 +1,4 @@
-package com.example.personal.bank.dto;
+package com.example.personal.bank.dto.phone;
 
 import lombok.Data;
 

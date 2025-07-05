@@ -1,6 +1,6 @@
 package com.example.personal.bank.service;
 
-import com.example.personal.bank.dto.TransferRequest;
+import com.example.personal.bank.dto.user.TransferRequest;
 import com.example.personal.bank.entities.Account;
 import com.example.personal.bank.repository.AccountRepository;
 import jakarta.transaction.Transactional;

@@ -1,7 +1,7 @@
 package com.example.personal.bank.controller;
 
-import com.example.personal.bank.dto.AuthRequest;
-import com.example.personal.bank.dto.TokenResponse;
+import com.example.personal.bank.dto.auth.AuthRequest;
+import com.example.personal.bank.dto.auth.TokenResponse;
 import com.example.personal.bank.service.AuthService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;

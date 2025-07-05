@@ -1,7 +1,7 @@
-package com.example.personal.bank.configuration;
+package com.example.personal.bank.security.config;
 
-import com.example.personal.bank.security.JwtTokenFilter;
-import com.example.personal.bank.security.JwtTokenProvider;
+import com.example.personal.bank.security.jwt.JwtTokenFilter;
+import com.example.personal.bank.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
