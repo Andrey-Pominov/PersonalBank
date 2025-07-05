@@ -1,12 +1,10 @@
 package com.example.personal.bank.controller;
 
-import com.example.personal.bank.dto.TransferRequest;
+import com.example.personal.bank.dto.user.TransferRequest;
 import com.example.personal.bank.service.TransferService;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,21 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/transfer")
+@RequestMapping("/api/transfer")
 @SecurityRequirement(name = "bearerAuth")
 public class TransferController {
 
     private final TransferService transferService;
 
     @PostMapping(produces = MediaType.TEXT_PLAIN_VALUE)
-    @ApiResponse(responseCode = "200", description = "Transfer completed successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)))
-    public ResponseEntity<String> transfer(
-            @Parameter(description = "Transfer request details, including recipient ID and amount")
-            @RequestBody TransferRequest request,
-            @Parameter(description = "ID of the authenticated sender, extracted from JWT token", hidden = true)
-            @AuthenticationPrincipal Long id
-    ) {
+    @ApiResponse(responseCode = "200", description = "Transfer completed successfully")
+    public ResponseEntity<String> transfer(@Valid @RequestBody TransferRequest request, @AuthenticationPrincipal Long id) {
         transferService.transfer(id, request);
         return ResponseEntity.ok("Transfer completed");
     }

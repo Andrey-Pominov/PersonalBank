@@ -2,7 +2,7 @@
 
 package com.example.personal.bank.service;
 
-import com.example.personal.bank.dto.PhoneDTO;
+import com.example.personal.bank.dto.phone.PhoneDTO;
 import com.example.personal.bank.entities.PhoneData;
 import com.example.personal.bank.entities.User;
 import com.example.personal.bank.repository.PhoneRepository;

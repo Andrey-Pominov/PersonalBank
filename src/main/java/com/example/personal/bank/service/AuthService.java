@@ -6,7 +6,7 @@ import com.example.personal.bank.entities.User;
 import com.example.personal.bank.repository.EmailRepository;
 import com.example.personal.bank.repository.PhoneRepository;
 import com.example.personal.bank.repository.UserRepository;
-import com.example.personal.bank.security.JwtTokenProvider;
+import com.example.personal.bank.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

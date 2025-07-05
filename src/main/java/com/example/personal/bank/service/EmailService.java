@@ -1,6 +1,6 @@
 package com.example.personal.bank.service;
 
-import com.example.personal.bank.dto.EmailDTO;
+import com.example.personal.bank.dto.email.EmailDTO;
 import com.example.personal.bank.entities.EmailData;
 import com.example.personal.bank.entities.User;
 import com.example.personal.bank.repository.EmailRepository;
