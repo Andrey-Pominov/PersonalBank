@@ -16,12 +16,11 @@ import java.math.BigDecimal;
 public class TransferService {
 
     private static final Logger logger = LoggerFactory.getLogger(TransferService.class);
-
     private final AccountRepository accountRepository;
 
     @Transactional
     public void transfer(Long senderUserId, TransferRequest request) {
-        logger.info("Initiating transfer from user ID: {} to user ID: {} with amount: {}",
+        logger.info("Initiating transfer from user {} to user {} with amount {}",
                 senderUserId, request.getRecipientUserId(), request.getAmount());
 
         if (senderUserId.equals(request.getRecipientUserId())) {
@@ -29,37 +28,24 @@ public class TransferService {
             throw new IllegalArgumentException("Cannot transfer to yourself");
         }
 
-        Account sender = accountRepository.findByUserId(senderUserId)
-                .orElseThrow(() -> {
-                    logger.error("Transfer failed: Sender account not found for user ID: {}", senderUserId);
-                    return new IllegalArgumentException("Sender account not found");
-                });
-
-        Account recipient = accountRepository.findByUserId(request.getRecipientUserId())
-                .orElseThrow(() -> {
-                    logger.error("Transfer failed: Recipient account not found for user ID: {}", request.getRecipientUserId());
-                    return new IllegalArgumentException("Recipient account not found");
-                });
-
-        if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            logger.warn("Transfer rejected: Invalid amount {} for user ID: {}", request.getAmount(), senderUserId);
+        BigDecimal amount = request.getAmount();
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Transfer amount must be positive");
         }
 
-        if (sender.getBalance().compareTo(request.getAmount()) < 0) {
-            logger.warn("Transfer rejected: Insufficient balance {} for user ID: {}, requested amount: {}",
-                    sender.getBalance(), senderUserId, request.getAmount());
+        Account sender = accountRepository.findForUpdateByUserId(senderUserId)
+                .orElseThrow(() -> new IllegalArgumentException("Sender account not found"));
+
+        Account recipient = accountRepository.findForUpdateByUserId(request.getRecipientUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Recipient account not found"));
+
+        if (sender.getBalance().compareTo(amount) < 0) {
             throw new IllegalArgumentException("Insufficient balance");
         }
 
-        sender.setBalance(sender.getBalance().subtract(request.getAmount()));
-        recipient.setBalance(recipient.getBalance().add(request.getAmount()));
-        logger.debug("Updated sender (ID: {}) balance to: {}, recipient (ID: {}) balance to: {}",
-                sender.getId(), sender.getBalance(), recipient.getId(), recipient.getBalance());
+        sender.setBalance(sender.getBalance().subtract(amount));
+        recipient.setBalance(recipient.getBalance().add(amount));
 
-        accountRepository.save(sender);
-        accountRepository.save(recipient);
-        logger.info("Transfer completed successfully from user ID: {} to user ID: {} with amount: {}",
-                senderUserId, request.getRecipientUserId(), request.getAmount());
+        logger.info("Transfer completed: {} -> {} | amount: {}", senderUserId, request.getRecipientUserId(), amount);
     }
 }
